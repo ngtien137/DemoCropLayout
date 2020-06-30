@@ -8,6 +8,8 @@
     tools:context=".MainActivity">
 
     <com.chim.croplayout.CropLayout
+        app:cl_grid_border_outside_size="10dp"
+        app:cl_grid_color="#f00"
         android:layout_margin="24dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,6 +19,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
+            android:onClick="imageClick"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
