@@ -1,0 +1,3 @@
+include ':croplayout'
+include ':app'
+rootProject.name = "DemoCropLayout"

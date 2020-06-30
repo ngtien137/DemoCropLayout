@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CropLayout">
+        <attr name="cl_grid_color" format="color"/>
+        <attr name="cl_grid_background" format="color"/>
+        <attr name="cl_grid_border_outside_size" format="dimension"/>
+        <attr name="cl_grid_border_inside_size" format="dimension"/>
+    </declare-styleable>
+</resources>
