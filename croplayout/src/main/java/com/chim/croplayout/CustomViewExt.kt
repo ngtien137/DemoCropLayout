@@ -14,26 +14,29 @@ fun Rect.set(l:Number, t:Number, r:Number, b:Number){
     set(l.toInt(),t.toInt(),r.toInt(),b.toInt())
 }
 
-fun RectF.setCenter(cX:Number,cY:Number,sizeX:Number,sizeY:Number){
+fun RectF.setCenter(cX:Number,cY:Number,sizeX:Number,sizeY:Number): RectF {
     val centerX = cX.toFloat()
     val centerY = cY.toFloat()
     val width = sizeX.toFloat()
     val height = sizeY.toFloat()
     set(centerX-width/2f,centerY-height/2f,centerX+width/2f,centerY+height/2f)
+    return this
 }
 
-fun RectF.setCenterX(cX:Number,sizeX:Number){
+fun RectF.setCenterX(cX:Number,sizeX:Number): RectF {
     val centerX = cX.toFloat()
     val width = sizeX.toFloat()
     set(centerX-width/2f,top,centerX+width/2f,bottom)
+    return this
 }
 
-fun Rect.setCenter(cX:Number,cY:Number,sizeX:Number,sizeY:Number){
+fun Rect.setCenter(cX:Number,cY:Number,sizeX:Number,sizeY:Number): Rect {
     val centerX = cX.toInt()
     val centerY = cY.toInt()
     val width = sizeX.toInt()
     val height = sizeY.toInt()
     set(centerX-width/2f,centerY-height/2,centerX+width/2,centerY+height/2)
+    return this
 }
 
 fun View.getDimen(@DimenRes dimenId:Int) = context.resources.getDimension(dimenId)

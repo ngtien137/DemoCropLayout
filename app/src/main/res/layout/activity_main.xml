@@ -8,8 +8,10 @@
     tools:context=".MainActivity">
 
     <com.chim.croplayout.CropLayout
-        app:cl_grid_border_outside_size="10dp"
-        app:cl_grid_color="#f00"
+        app:cl_grid_border_outside_size="4dp"
+        app:cl_grid_border_inside_size="2dp"
+        app:cl_decoration="corners_oval"
+        app:cl_grid_color="#fff"
         android:layout_margin="24dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

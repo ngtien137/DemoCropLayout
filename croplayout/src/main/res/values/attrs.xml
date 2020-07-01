@@ -5,5 +5,21 @@
         <attr name="cl_grid_background" format="color"/>
         <attr name="cl_grid_border_outside_size" format="dimension"/>
         <attr name="cl_grid_border_inside_size" format="dimension"/>
+        <attr name="cl_grid_size" format="enum">
+            <enum name="none" value="0"/>
+            <enum name="_3x3" value="3"/>
+            <enum name="_4x4" value="4"/>
+            <enum name="_9x9" value="9"/>
+        </attr>
+
+        <attr name="cl_decoration" format="enum">
+            <enum name="none" value="0"/>
+            <enum name="corners_line" value="1"/>
+            <enum name="corners_oval" value="2"/>
+        </attr>
+        <attr name="cl_decoration_size" format="dimension"/>
+        <attr name="cl_decoration_color" format="color"/>
+        
+        <attr name="cl_touch_sensitivity_size" format="dimension"/>
     </declare-styleable>
 </resources>
