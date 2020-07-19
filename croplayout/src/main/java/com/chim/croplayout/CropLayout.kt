@@ -7,9 +7,13 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.ViewConfiguration
 import android.widget.FrameLayout
+import android.widget.ImageView
+import androidx.annotation.IdRes
 import androidx.core.graphics.contains
+import androidx.core.graphics.drawable.toBitmap
 import kotlin.math.abs
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 class CropLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
@@ -48,6 +52,7 @@ class CropLayout @JvmOverloads constructor(
     private val touchSlop by lazy {
         ViewConfiguration.get(context).scaledTouchSlop
     }
+    private var minCropPercent = 0.1f
 
     init {
         init(attrs)
@@ -103,7 +108,12 @@ class CropLayout @JvmOverloads constructor(
                 DecorationType.CORNERS_OVAL -> {
                     paintDecoration.strokeWidth = 0f
                 }
+                else -> {
+                    paintDecoration.strokeWidth = 0f
+                }
             }
+
+            minCropPercent = ta.getFloat(R.styleable.CropLayout_cl_min_crop_percent, 10f) / 100f
 
             touchSensitivitySize = ta.getDimension(
                 R.styleable.CropLayout_cl_touch_sensitivity_size,
@@ -163,15 +173,35 @@ class CropLayout @JvmOverloads constructor(
 
             }
             DecorationType.CORNERS_OVAL -> {
-                val ovalTopLeft = RectF().setCenter(rectBorder.left,rectBorder.top,decorationSize,decorationSize)
-                val ovalTopRight = RectF().setCenter(rectBorder.right,rectBorder.top,decorationSize,decorationSize)
-                val ovalBottomRight = RectF().setCenter(rectBorder.right,rectBorder.bottom,decorationSize,decorationSize)
-                val ovalBottomLeft = RectF().setCenter(rectBorder.left,rectBorder.bottom,decorationSize,decorationSize)
+                val ovalTopLeft = RectF().setCenter(
+                    rectBorder.left,
+                    rectBorder.top,
+                    decorationSize,
+                    decorationSize
+                )
+                val ovalTopRight = RectF().setCenter(
+                    rectBorder.right,
+                    rectBorder.top,
+                    decorationSize,
+                    decorationSize
+                )
+                val ovalBottomRight = RectF().setCenter(
+                    rectBorder.right,
+                    rectBorder.bottom,
+                    decorationSize,
+                    decorationSize
+                )
+                val ovalBottomLeft = RectF().setCenter(
+                    rectBorder.left,
+                    rectBorder.bottom,
+                    decorationSize,
+                    decorationSize
+                )
 
-                pathDecoration.addOval(ovalTopLeft,Path.Direction.CCW)
-                pathDecoration.addOval(ovalTopRight,Path.Direction.CCW)
-                pathDecoration.addOval(ovalBottomRight,Path.Direction.CCW)
-                pathDecoration.addOval(ovalBottomLeft,Path.Direction.CCW)
+                pathDecoration.addOval(ovalTopLeft, Path.Direction.CCW)
+                pathDecoration.addOval(ovalTopRight, Path.Direction.CCW)
+                pathDecoration.addOval(ovalBottomRight, Path.Direction.CCW)
+                pathDecoration.addOval(ovalBottomLeft, Path.Direction.CCW)
             }
             else -> {
             }
@@ -298,9 +328,10 @@ class CropLayout @JvmOverloads constructor(
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     //eLog("Up")
+                    val isHandleChild = !(isTouchMoving || isMovingCropArea)
                     isTouchMoving = false
                     isMovingCropArea = false
-                    return true
+                    return !isHandleChild
                 }
                 else -> {
                     return false
@@ -311,17 +342,33 @@ class CropLayout @JvmOverloads constructor(
     }
 
     private fun moveCropArea(disX: Int, disY: Int) {
-        rectBorder.set(
-            rectBorder.left + disX,
-            rectBorder.top + disY,
-            rectBorder.right + disX,
-            rectBorder.bottom + disY
-        )
+        val currentWidth = rectBorder.width()
+        val currentHeight = rectBorder.height()
+        val minLeft = 0f + paintGrid.strokeWidth / 2f
+        val maxLeft = width - currentWidth - paintGrid.strokeWidth / 2f
+        val minTop = 0f + paintGrid.strokeWidth / 2f
+        val maxTop = height - currentHeight - paintGrid.strokeWidth / 2f
+        val newLeft = when {
+            rectBorder.left + disX < minLeft -> minLeft
+            rectBorder.left + disX > maxLeft -> maxLeft
+            else -> rectBorder.left + disX
+        }
+        val newTop = when {
+            rectBorder.top + disY < minTop -> minTop
+            rectBorder.top + disY > maxTop -> maxTop
+            else -> rectBorder.top + disY
+        }
+        rectBorder.set(newLeft, newTop, newLeft + currentWidth, newTop + currentHeight)
         validateCropViewWithBorder()
         invalidate()
     }
 
     private fun scaleCropArea(disX: Int, disY: Int) {
+        val minLeft = 0f + paintGrid.strokeWidth / 2f
+        val minTop = 0f + paintGrid.strokeWidth / 2f
+        val maxRight = width - paintGrid.strokeWidth / 2f
+        val maxBottom = height - paintGrid.strokeWidth / 2f
+
         var addLeft = 0f
         var addTop = 0f
         var addRight = 0f
@@ -350,14 +397,47 @@ class CropLayout @JvmOverloads constructor(
 
             }
         }
-        rectBorder.set(
-            rectBorder.left + addLeft,
-            rectBorder.top + addTop,
-            rectBorder.right + addRight,
-            rectBorder.bottom + addBottom
-        )
+        val left =
+            if (rectBorder.left + addLeft < minLeft) minLeft else if (rectBorder.left + addLeft > rectBorder.right - minCropPercent * width) rectBorder.right - minCropPercent * width else rectBorder.left + addLeft
+        val right =
+            if (rectBorder.right + addRight > maxRight) maxRight else if (rectBorder.right + addRight < rectBorder.left + minCropPercent * width) rectBorder.left + minCropPercent * width else rectBorder.right + addRight
+        val top =
+            if (rectBorder.top + addTop < minTop) minTop else if (rectBorder.top + addTop > rectBorder.bottom - minCropPercent * height) rectBorder.bottom - minCropPercent * height else rectBorder.top + addTop
+        val bottom =
+            if (rectBorder.bottom + addBottom > maxBottom) maxBottom else if (rectBorder.bottom + addBottom < rectBorder.top + minCropPercent * height) rectBorder.top + minCropPercent * height else rectBorder.bottom + addBottom
+        rectBorder.set(left, top, right, bottom)
         validateCropViewWithBorder()
         invalidate()
+    }
+
+    fun applyCropToImageView(@IdRes imageViewId: Int) {
+        applyCropToImageView(findViewById<ImageView>(imageViewId))
+    }
+
+    fun applyCropToImageView(imageView: ImageView) {
+        val bitmap = imageView.drawable.toBitmap()
+        val ratioW = width.toFloat() / bitmap.width
+        val ratioH = height.toFloat() / bitmap.height
+        val transX = (rectBorder.left - paintGrid.strokeWidth / 2f) / ratioW
+        val transY = (rectBorder.top - paintGrid.strokeWidth / 2f) / ratioH
+        val drawBitmap = Bitmap.createBitmap(
+            (rectBorder.width() / ratioW).roundToInt(),
+            (rectBorder.height() / ratioH).roundToInt(), Bitmap.Config.ARGB_8888
+        )
+        val matrix = Matrix()
+        matrix.postTranslate(
+            -transX,
+            -transY
+        )
+        val c = Canvas(drawBitmap)
+        c.drawBitmap(bitmap, matrix, Paint(Paint.ANTI_ALIAS_FLAG))
+        imageView.setImageBitmap(drawBitmap)
+    }
+
+    fun convertToRealSize(oldW: Int, oldH: Int): Size {
+        val ratioW = oldW.toFloat() / width
+        val ratioH = oldH.toFloat() / height
+        return Size(rectBorder.width() * ratioW, rectBorder.height() * ratioH)
     }
 
     private fun checkTouchToScale(pointF: PointF): ScaleMode {
@@ -404,5 +484,9 @@ class CropLayout @JvmOverloads constructor(
 
     enum class DecorationType(val type: Int) {
         NONE(0), CORNERS_LINE(1), CORNERS_OVAL(2)
+    }
+
+    class Size(var width: Int = 0, var height: Int = 0) {
+        constructor(w: Float, h: Float) : this(w.toInt(), h.toInt())
     }
 }

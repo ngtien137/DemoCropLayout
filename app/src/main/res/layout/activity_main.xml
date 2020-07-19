@@ -3,30 +3,42 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="#222"
     android:layout_height="match_parent"
+    android:background="#222"
     tools:context=".MainActivity">
 
     <com.chim.croplayout.CropLayout
-        app:cl_grid_border_outside_size="4dp"
-        app:cl_grid_border_inside_size="2dp"
-        app:cl_decoration="corners_oval"
-        app:cl_grid_color="#fff"
-        android:layout_margin="24dp"
-        android:layout_width="wrap_content"
+        android:id="@+id/cropLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        app:cl_decoration="corners_oval"
+        app:cl_grid_border_inside_size="2dp"
+        app:cl_grid_border_outside_size="4dp"
+        app:cl_grid_color="#fff"
+        app:cl_touch_sensitivity_size="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:onClick="imageClick"
+            android:id="@+id/imgMain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
+            android:onClick="imageClick"
+            android:scaleType="fitCenter"
             android:src="@drawable/butterfly"
             tools:ignore="ContentDescription" />
     </com.chim.croplayout.CropLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="applyCrop"
+        android:text="@string/apply_crop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
