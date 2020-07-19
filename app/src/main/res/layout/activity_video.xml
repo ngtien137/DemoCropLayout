@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#222"
-    tools:context=".MainActivity">
+    tools:context=".VideoActivity">
 
     <com.chim.croplayout.CropLayout
-        android:id="@+id/cropLayout"
+        android:id="@+id/cropLayoutVideo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
@@ -27,26 +27,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
-            android:onClick="imageClick"
             android:scaleType="fitCenter"
             android:src="@drawable/butterfly"
             tools:ignore="ContentDescription" />
+
     </com.chim.croplayout.CropLayout>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="applyCrop"
-        android:text="@string/apply_crop"
+        android:onClick="onLoadVideo"
+        android:text="@string/load_video"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="changeToVideoDemo"
-        android:text="@string/video_demo"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

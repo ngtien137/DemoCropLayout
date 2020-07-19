@@ -297,7 +297,6 @@ class CropLayout @JvmOverloads constructor(
                     currentScaleMode = checkTouchToScale(currentPointAction)
                     if (rectBorder.contains(currentPointAction))
                         isMovingCropArea = true
-                    return false
                 }
                 MotionEvent.ACTION_MOVE -> {
                     if (isTouchMoving) {

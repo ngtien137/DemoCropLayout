@@ -1,5 +1,6 @@
 package com.chim.democroplayout
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -18,5 +19,9 @@ class MainActivity : AppCompatActivity() {
 
     fun applyCrop(view: View) {
         cropLayout.applyCropToImageView(R.id.imgMain)
+    }
+
+    fun changeToVideoDemo(view: View) {
+        startActivity(Intent(this, VideoActivity::class.java))
     }
 }
