@@ -288,7 +288,7 @@ class CropLayout @JvmOverloads constructor(
         canvas.drawPath(pathDecoration, paintDecoration)
     }
 
-    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         ev?.let {
             when (ev.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
@@ -297,6 +297,9 @@ class CropLayout @JvmOverloads constructor(
                     currentScaleMode = checkTouchToScale(currentPointAction)
                     if (rectBorder.contains(currentPointAction))
                         isMovingCropArea = true
+                    return if (currentScaleMode != ScaleMode.NONE || isMovingCropArea)
+                        true
+                    else super.dispatchTouchEvent(ev)
                 }
                 MotionEvent.ACTION_MOVE -> {
                     if (isTouchMoving) {
@@ -315,14 +318,15 @@ class CropLayout @JvmOverloads constructor(
                             else -> {
                             }
                         }
-                        return false
+                        return true
                     } else {
                         if (!isTouchMoving) {
                             if (abs(ev.x - currentPointAction.x) > touchSlop || abs(ev.y - currentPointAction.y) > touchSlop) {
                                 isTouchMoving = true
+                                return true
                             }
                         }
-                        return false
+                        return super.dispatchTouchEvent(ev)
                     }
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -330,14 +334,17 @@ class CropLayout @JvmOverloads constructor(
                     val isHandleChild = !(isTouchMoving || isMovingCropArea)
                     isTouchMoving = false
                     isMovingCropArea = false
-                    return !isHandleChild
+                    return if (isHandleChild){
+                        super.dispatchTouchEvent(ev)
+                    }else
+                        true
                 }
                 else -> {
-                    return false
+                    return super.dispatchTouchEvent(ev)
                 }
             }
         }
-        return super.onInterceptTouchEvent(ev)
+        return super.dispatchTouchEvent(ev)
     }
 
     private fun moveCropArea(disX: Int, disY: Int) {
