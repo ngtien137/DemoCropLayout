@@ -3,6 +3,8 @@ package com.chim.democroplayout.player
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
+import android.view.SurfaceView
+import android.view.TextureView
 import androidx.core.content.FileProvider
 import androidx.lifecycle.MutableLiveData
 import com.chim.democroplayout.App
@@ -19,7 +21,8 @@ class AppPlayer {
     var playerView: PlayerView? = null
     var duration = 0L
     var currentProgress = 0L
-    private var media: SimpleExoPlayer? = null
+    var media: SimpleExoPlayer? = null
+        private set
     var state = State.NOT_READY
     var listener: IAppPlayerListener? = null
     var isIniting = false
@@ -69,6 +72,15 @@ class AppPlayer {
 
         }
     }
+
+    fun setSurfaceView(surfaceView: SurfaceView) {
+        media?.setVideoSurfaceView(surfaceView)
+    }
+
+    fun setTextureView(textureView: TextureView) {
+        media?.setVideoTextureView(textureView)
+    }
+
     private var hander = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             listener?.onProgressChange(currentProgress)

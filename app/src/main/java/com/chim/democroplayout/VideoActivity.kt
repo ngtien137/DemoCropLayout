@@ -4,16 +4,23 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Matrix
+import android.media.MediaExtractor
+import android.media.MediaFormat
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
+import com.chim.croplayout.CropLayout
 import com.chim.democroplayout.player.AppPlayer
 import kotlinx.android.synthetic.main.activity_video.*
 import java.io.File
+
 
 class VideoActivity : AppCompatActivity() {
     companion object {
@@ -36,16 +43,27 @@ class VideoActivity : AppCompatActivity() {
         loadVideo()
     }
 
+    fun applyCrop(view: View) {
+    }
+
+    var currentVideoPath: String? = null
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             REQUEST_VIDEO -> {
                 if (resultCode == Activity.RESULT_OK) {
                     data?.let {
-                        val path = getPath(it.data!!)
-                        if (path != null) {
-                            if (File(path).exists()) {
-                                appPlayer.init(path)
+                        currentVideoPath = getPath(it.data!!)
+                        if (currentVideoPath != null) {
+                            if (File(currentVideoPath!!).exists()) {
+                                appPlayer.init(currentVideoPath!!)
+                                val textureMovie = MovieTextureView.TextureMovie(currentVideoPath!!)
+                                surfaceView.adjustAspectRatio(
+                                    textureMovie.width,
+                                    textureMovie.height
+                                )
+                                appPlayer.setTextureView(surfaceView)
+                                surfaceView.requestLayout()
                             } else
                                 Toast.makeText(
                                     this,
@@ -133,4 +151,10 @@ class VideoActivity : AppCompatActivity() {
             onDenied?.invoke()
         }
     }
+
+    override fun onDestroy() {
+        appPlayer.release()
+        super.onDestroy()
+    }
+
 }

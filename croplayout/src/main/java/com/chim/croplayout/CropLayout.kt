@@ -494,5 +494,11 @@ class CropLayout @JvmOverloads constructor(
 
     class Size(var width: Int = 0, var height: Int = 0) {
         constructor(w: Float, h: Float) : this(w.toInt(), h.toInt())
+
+        override fun toString(): String {
+            return "Size(width=$width, height=$height)"
+        }
+
+
     }
 }
