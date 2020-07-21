@@ -37,7 +37,7 @@ class VideoActivity : AppCompatActivity() {
 
     private val appPlayer by lazy {
         AppPlayer().apply {
-            playerView = this@VideoActivity.playerView
+            //playerView = this@VideoActivity.playerView
         }
     }
 
@@ -45,13 +45,13 @@ class VideoActivity : AppCompatActivity() {
         loadVideo()
     }
 
+    private lateinit var movie: PlayerMovie
     fun applyCrop(view: View) {
-        val movie = PlayerMovie(currentVideoPath!!)
-        cropLayoutVideo.applyCropToTextureView(
-            playerView.videoSurfaceView as TextureView,
-            movie.width,
-            movie.height
-        )
+//        cropLayoutVideo.applyCropToPlayerView(
+//            playerView,
+//            playerView.videoSurfaceView as TextureView
+//        )
+        cropLayoutVideo.appCropToTextureView(movieTextureView)
     }
 
     var currentVideoPath: String? = null
@@ -64,7 +64,10 @@ class VideoActivity : AppCompatActivity() {
                         currentVideoPath = getPath(it.data!!)
                         if (currentVideoPath != null) {
                             if (File(currentVideoPath!!).exists()) {
+                                movie = PlayerMovie(currentVideoPath!!)
                                 appPlayer.init(currentVideoPath!!)
+                                appPlayer.setTextureView(movieTextureView)
+                                movieTextureView.wrapVideo(movie.width, movie.height)
                             } else
                                 Toast.makeText(
                                     this,
