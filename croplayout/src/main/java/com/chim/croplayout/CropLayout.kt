@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
+import android.view.TextureView
 import android.view.ViewConfiguration
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -334,9 +336,9 @@ class CropLayout @JvmOverloads constructor(
                     val isHandleChild = !(isTouchMoving || isMovingCropArea)
                     isTouchMoving = false
                     isMovingCropArea = false
-                    return if (isHandleChild){
+                    return if (isHandleChild) {
                         super.dispatchTouchEvent(ev)
-                    }else
+                    } else
                         true
                 }
                 else -> {
@@ -416,11 +418,11 @@ class CropLayout @JvmOverloads constructor(
         invalidate()
     }
 
-    fun applyCropToImageView(@IdRes imageViewId: Int) {
-        applyCropToImageView(findViewById<ImageView>(imageViewId))
+    fun applyCropToImageView(@IdRes imageViewId: Int): Bitmap {
+        return applyCropToImageView(findViewById<ImageView>(imageViewId))
     }
 
-    fun applyCropToImageView(imageView: ImageView) {
+    fun applyCropToImageView(imageView: ImageView): Bitmap {
         val bitmap = imageView.drawable.toBitmap()
         val ratioW = width.toFloat() / bitmap.width
         val ratioH = height.toFloat() / bitmap.height
@@ -438,6 +440,21 @@ class CropLayout @JvmOverloads constructor(
         val c = Canvas(drawBitmap)
         c.drawBitmap(bitmap, matrix, Paint(Paint.ANTI_ALIAS_FLAG))
         imageView.setImageBitmap(drawBitmap)
+        return bitmap
+    }
+
+    fun applyCropToTextureView(textureView: TextureView, videoWidth: Int, videoHeight: Int) {
+        val ratioW = width.toFloat() / videoWidth
+        val ratioH = height.toFloat() / videoHeight
+        val transX = (rectBorder.left - paintGrid.strokeWidth / 2f) / ratioW
+        val transY = (rectBorder.top - paintGrid.strokeWidth / 2f) / ratioH
+        val matrix = Matrix()
+        textureView.getTransform(matrix)
+        matrix.postTranslate(
+            -transX,
+            -transY
+        )
+        textureView.setTransform(matrix)
     }
 
     fun convertToRealSize(oldW: Int, oldH: Int): Size {

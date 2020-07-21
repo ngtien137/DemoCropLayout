@@ -12,12 +12,14 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.TextureView
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import com.chim.croplayout.CropLayout
 import com.chim.democroplayout.player.AppPlayer
+import com.chim.democroplayout.player.PlayerMovie
 import kotlinx.android.synthetic.main.activity_video.*
 import java.io.File
 
@@ -35,7 +37,7 @@ class VideoActivity : AppCompatActivity() {
 
     private val appPlayer by lazy {
         AppPlayer().apply {
-            //playerView = this@VideoActivity.playerView
+            playerView = this@VideoActivity.playerView
         }
     }
 
@@ -44,6 +46,12 @@ class VideoActivity : AppCompatActivity() {
     }
 
     fun applyCrop(view: View) {
+        val movie = PlayerMovie(currentVideoPath!!)
+        cropLayoutVideo.applyCropToTextureView(
+            playerView.videoSurfaceView as TextureView,
+            movie.width,
+            movie.height
+        )
     }
 
     var currentVideoPath: String? = null
@@ -57,13 +65,6 @@ class VideoActivity : AppCompatActivity() {
                         if (currentVideoPath != null) {
                             if (File(currentVideoPath!!).exists()) {
                                 appPlayer.init(currentVideoPath!!)
-                                val textureMovie = MovieTextureView.TextureMovie(currentVideoPath!!)
-                                surfaceView.adjustAspectRatio(
-                                    textureMovie.width,
-                                    textureMovie.height
-                                )
-                                appPlayer.setTextureView(surfaceView)
-                                surfaceView.requestLayout()
                             } else
                                 Toast.makeText(
                                     this,

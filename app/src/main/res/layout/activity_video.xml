@@ -22,10 +22,12 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.chim.democroplayout.MovieTextureView
-            android:id="@+id/surfaceView"
+        <com.google.android.exoplayer2.ui.PlayerView
+            android:id="@+id/playerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            app:surface_type="texture_view"
+            app:use_controller="false" />
 
     </com.chim.croplayout.CropLayout>
 
