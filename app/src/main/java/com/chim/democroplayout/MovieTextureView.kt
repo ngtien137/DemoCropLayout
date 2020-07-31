@@ -37,7 +37,7 @@ class MovieTextureView @JvmOverloads constructor(
         mSurfaceTextureReady = true
     }
 
-    fun adjustAspectRatio(videoWidth: Int, videoHeight: Int) {
+    fun adjustAspectRatioMatrix(videoWidth: Int, videoHeight: Int) {
         val aspectRatio = videoHeight.toDouble() / videoWidth
         val newWidth: Int
         val newHeight: Int
@@ -61,5 +61,23 @@ class MovieTextureView @JvmOverloads constructor(
         //txform.postRotate(10);          // just for fun
         txform.postTranslate(xoff.toFloat(), yoff.toFloat())
         setTransform(txform)
+    }
+
+    fun wrapVideo(videoWidth: Int, videoHeight: Int){
+        val aspectRatio = videoHeight.toDouble() / videoWidth
+        val newWidth: Int
+        val newHeight: Int
+        if (height > (width * aspectRatio).toInt()) {
+            // limited by narrow width; restrict height
+            newWidth = width
+            newHeight = (width * aspectRatio).toInt()
+        } else {
+            // limited by short height; restrict width
+            newWidth = (height / aspectRatio).toInt()
+            newHeight = height
+        }
+        layoutParams.width = newWidth
+        layoutParams.height = newHeight
+        requestLayout()
     }
 }

@@ -26,8 +26,14 @@
             android:id="@+id/playerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:surface_type="texture_view"
             app:use_controller="false" />
+
+        <com.chim.democroplayout.MovieTextureView
+            android:id="@+id/movieTextureView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
     </com.chim.croplayout.CropLayout>
 

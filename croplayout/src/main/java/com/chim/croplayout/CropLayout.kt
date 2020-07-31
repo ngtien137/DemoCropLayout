@@ -1,13 +1,12 @@
 package com.chim.croplayout
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.TextureView
 import android.view.ViewConfiguration
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.annotation.IdRes
@@ -443,18 +442,53 @@ class CropLayout @JvmOverloads constructor(
         return bitmap
     }
 
-    fun applyCropToTextureView(textureView: TextureView, videoWidth: Int, videoHeight: Int) {
-        val ratioW = width.toFloat() / videoWidth
-        val ratioH = height.toFloat() / videoHeight
-        val transX = (rectBorder.left - paintGrid.strokeWidth / 2f) / ratioW
-        val transY = (rectBorder.top - paintGrid.strokeWidth / 2f) / ratioH
+    private fun applyCropToPlayerView(
+        playerView: ViewGroup,
+        textureView: TextureView
+    ) {
+        /**
+         * Texture of player view auto fix size of texture view depends on video
+         * So when set layout params again, it causes some error, not fix yet, so this function still close
+         */
+        val ratioW = textureView.width.toFloat() / rectBorder.width()
+        val ratioH = textureView.height.toFloat() / rectBorder.height()
+
+        val transX = (rectBorder.left - paintGrid.strokeWidth / 2f) * ratioW
+        val transY = (rectBorder.top - paintGrid.strokeWidth / 2f) * ratioH
         val matrix = Matrix()
         textureView.getTransform(matrix)
+        val newWidth = textureView.width
+        val newHeight = rectBorder.height() / rectBorder.width() * newWidth
+
+        matrix.postScale(ratioW, ratioH)
         matrix.postTranslate(
             -transX,
             -transY
         )
         textureView.setTransform(matrix)
+
+        playerView.layoutParams = LayoutParams(newWidth, newHeight.toInt())
+        textureView.layoutParams = LayoutParams(newWidth, newHeight.toInt())
+    }
+
+    fun appCropToTextureView(textureView: TextureView) {
+        val ratioW = textureView.width.toFloat() / rectBorder.width()
+        val ratioH = textureView.height.toFloat() / rectBorder.height()
+
+        val transX = (rectBorder.left - paintGrid.strokeWidth / 2f) * ratioW
+        val transY = (rectBorder.top - paintGrid.strokeWidth / 2f) * ratioH
+        val matrix = Matrix()
+        textureView.getTransform(matrix)
+        val newWidth = textureView.width
+        val newHeight = rectBorder.height() / rectBorder.width() * newWidth
+
+        matrix.postScale(ratioW, ratioH)
+        matrix.postTranslate(
+            -transX,
+            -transY
+        )
+        textureView.setTransform(matrix)
+        textureView.layoutParams = LayoutParams(newWidth, newHeight.toInt())
     }
 
     fun convertToRealSize(oldW: Int, oldH: Int): Size {
