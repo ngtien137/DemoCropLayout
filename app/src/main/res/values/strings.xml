@@ -3,4 +3,5 @@
     <string name="apply_crop">Apply Crop</string>
     <string name="video_demo">Video Demo</string>
     <string name="load_video">Load Video</string>
+    <string name="rotate">Rotate</string>
 </resources>

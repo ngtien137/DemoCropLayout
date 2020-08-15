@@ -4,22 +4,15 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Matrix
-import android.media.MediaExtractor
-import android.media.MediaFormat
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
-import android.view.TextureView
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentActivity
-import com.chim.croplayout.CropLayout
 import com.chim.democroplayout.player.AppPlayer
-import com.chim.democroplayout.player.PlayerMovie
+import com.chim.croplayout.PlayerMovie
 import kotlinx.android.synthetic.main.activity_video.*
 import java.io.File
 
@@ -45,6 +38,10 @@ class VideoActivity : AppCompatActivity() {
         loadVideo()
     }
 
+    fun rotate(v: View) {
+        movieTextureView.rotation += 90
+    }
+
     private lateinit var movie: PlayerMovie
     fun applyCrop(view: View) {
 //        cropLayoutVideo.applyCropToPlayerView(
@@ -64,7 +61,9 @@ class VideoActivity : AppCompatActivity() {
                         currentVideoPath = getPath(it.data!!)
                         if (currentVideoPath != null) {
                             if (File(currentVideoPath!!).exists()) {
-                                movie = PlayerMovie(currentVideoPath!!)
+                                movie = PlayerMovie(
+                                    currentVideoPath!!
+                                )
                                 appPlayer.init(currentVideoPath!!)
                                 appPlayer.setTextureView(movieTextureView)
                                 movieTextureView.wrapVideo(movie.width, movie.height)

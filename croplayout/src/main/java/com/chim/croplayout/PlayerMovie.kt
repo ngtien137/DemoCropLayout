@@ -1,8 +1,9 @@
-package com.chim.democroplayout.player
+package com.chim.croplayout
 
 import android.media.MediaExtractor
 import android.media.MediaFormat
 import android.os.Build
+import java.lang.Exception
 
 class PlayerMovie {
     var path: String = ""
@@ -30,7 +31,11 @@ class PlayerMovie {
         width = format.getInteger(MediaFormat.KEY_WIDTH)
         height = format.getInteger(MediaFormat.KEY_HEIGHT)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            rotation = format.getFloat(MediaFormat.KEY_ROTATION)
+            try {
+                rotation = format.getFloat(MediaFormat.KEY_ROTATION)?:0f
+            }catch (e:NullPointerException){
+
+            }
         }
     }
 

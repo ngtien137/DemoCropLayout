@@ -1,14 +1,10 @@
-package com.chim.democroplayout
+package com.chim.croplayout
 
 import android.content.Context
 import android.graphics.Matrix
 import android.graphics.SurfaceTexture
-import android.media.MediaExtractor
-import android.media.MediaFormat
 import android.util.AttributeSet
 import android.view.TextureView
-import com.chim.croplayout.CropLayout
-import kotlinx.android.synthetic.main.activity_video.*
 
 class MovieTextureView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0

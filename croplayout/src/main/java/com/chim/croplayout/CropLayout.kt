@@ -471,6 +471,8 @@ class CropLayout @JvmOverloads constructor(
         textureView.layoutParams = LayoutParams(newWidth, newHeight.toInt())
     }
 
+    val currentScaleValue = SizeF(1f, 1f)
+    val currentTranslateValue = SizeF(0f, 0f)
     fun appCropToTextureView(textureView: TextureView) {
         val ratioW = textureView.width.toFloat() / rectBorder.width()
         val ratioH = textureView.height.toFloat() / rectBorder.height()
@@ -479,6 +481,7 @@ class CropLayout @JvmOverloads constructor(
         val transY = (rectBorder.top - paintGrid.strokeWidth / 2f) * ratioH
         val matrix = Matrix()
         textureView.getTransform(matrix)
+        eLog("Current Matrix: $matrix")
         val newWidth = textureView.width
         val newHeight = rectBorder.height() / rectBorder.width() * newWidth
 
@@ -487,6 +490,13 @@ class CropLayout @JvmOverloads constructor(
             -transX,
             -transY
         )
+        currentTranslateValue.x -= transX
+        currentTranslateValue.y -= transY
+        currentScaleValue.x += ratioW
+        currentScaleValue.y += ratioH
+        eLog("New Matrix: $matrix")
+        eLog("CurrentTranslate: $currentTranslateValue")
+        eLog("CurrentScale: $currentScaleValue")
         textureView.setTransform(matrix)
         textureView.layoutParams = LayoutParams(newWidth, newHeight.toInt())
     }
@@ -549,7 +559,12 @@ class CropLayout @JvmOverloads constructor(
         override fun toString(): String {
             return "Size(width=$width, height=$height)"
         }
+    }
 
+    data class SizeF(var x: Float = 0f, var y: Float = 0f) {
 
+        override fun toString(): String {
+            return "SizeF(x=$x, y=$x)"
+        }
     }
 }
